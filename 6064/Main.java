@@ -50,22 +50,20 @@ public class Main{
                 temp=x; x=y; y=temp;
             }
             // get LCM of M,N
-            long lcm = getLCM(M,N);
+            long maxYear = getLCM(M,N);
             //System.out.println("LCM: "+lcm);
-            int a = 0,b = 0;
             int i = 0;
-            while(i<=lcm){
+            int a=0, b=0;
+            while(i<=maxYear){
                 //System.out.println("i: "+i+" a: "+a+" b: "+b);
                 if(x==a){
-                    b = (b+M)%N;
+                    b = (b+M-1)%N+1;
                     i += M;
                 }else{
-                    b = (b+x-a)%N;
+                    b = (b+x-a-1)%N+1;
                     i += x-a;
                     a=x;
                 }
-                if(b==0)
-                    b = N;
                 if(b==y)
                     return i;
             }
@@ -75,18 +73,10 @@ public class Main{
     }
 
     public static int getGCD(int a, int b){
-        int copyA = a, copyB = b;
-            int i = 2;
-            int gcd = 1;
-            while(i<=copyA && i<=copyB){
-                if(copyA%i==0 && copyB%i==0){
-                    copyA /= i;
-                    copyB /= i;
-                    gcd *= i;
-                }
-                i++;
-            }
-        return gcd;
+        if(a%b==0)
+            return b;
+
+        return getGCD(b,a%b);
     }
 
     public static long getLCM(int a, int b){
