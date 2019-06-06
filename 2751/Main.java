@@ -1,6 +1,7 @@
 /*
     baekjoon online judge
     problem number 2751
+    heap sort, merge sort, quick sort
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;

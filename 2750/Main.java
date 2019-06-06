@@ -1,6 +1,7 @@
 /*
     baekjoon online judge
     problem number 2750
+    insertion sort, selection sort, bubble sort
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;

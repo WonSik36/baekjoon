@@ -1,6 +1,7 @@
 /*
     baekjoon online judge
     problem number 15552
+    https://www.acmicpc.net/problem/15552
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -18,7 +19,7 @@ public class Main{
         //String outputStr = "";
         int num = Integer.parseInt(inputStr);
         int x,y;
-        String[] arr = new String[2];
+        //String[] arr = new String[2];
         
         for(int i=0;i<num;i++){
             inputStr = br.readLine();
