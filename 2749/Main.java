@@ -27,7 +27,7 @@ public class Main{
             fiboArr[i] = fiboArr[i-1] + fiboArr[i-2];
             fiboArr[i] %= mod;
         }
-        bw.write(Long.toString(fiboArr[(int)(num%period)])+"\n");
+        bw.write(Long.toString(fiboArr[(int)(num%period)])+"\n");   //nth fibo num is same as (n%pisano period)th num
 
         bw.flush();
         bw.close();
