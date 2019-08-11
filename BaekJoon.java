@@ -14,7 +14,7 @@ public class BaekJoon{
         
         File file = new File("C:/Users/wonsik/Documents/baekjoon/"+problemNum);
         file.mkdir();
-        BufferedReader br = new BufferedReader(new FileReader("C:/Users/wonsik/Documents/baekjoon/11053/Main.java"));
+        BufferedReader br = new BufferedReader(new FileReader("C:/Users/wonsik/Documents/baekjoon/9251/Main.java"));
         BufferedWriter bw = new BufferedWriter(new FileWriter(file+"/Main.java"));
         
         while(true) {
