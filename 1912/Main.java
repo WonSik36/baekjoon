@@ -2,6 +2,7 @@
     baekjoon online judge
     problem number 1912
     https://www.acmicpc.net/problem/1912
+    https://debuglog.tistory.com/79
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
