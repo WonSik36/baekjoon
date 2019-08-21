@@ -136,7 +136,7 @@ public class Main{
         }
     }
  
-    public static int partition(int arr[], int begin, int end) {
+    public static int partition(int[] arr, int begin, int end) {
         int left = begin;
         int right = end;
  
