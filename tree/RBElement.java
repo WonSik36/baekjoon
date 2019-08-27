@@ -78,4 +78,11 @@ public class RBElement extends Element{
                 return g.getLChild();
         }
     }
+
+    public RBElement getSibling(){
+        if(parent.getLChild()==this)
+            return parent.getRChild();
+        else
+            return parent.getLChild();
+    }
 }

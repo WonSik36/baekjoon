@@ -3,6 +3,8 @@
 */
 package baekjoon.tree;
 
+import java.io.IOException;
+
 public class Element{
     private int key;
     private int value;
@@ -78,5 +80,30 @@ public class Element{
             return 0;
         else
             return -1;
+    }
+
+    public void copy(Element e){
+        this.key = e.key;
+        this.value = e.value;
+    }
+
+    // when delete function execute
+    // and when there is a target node to delete
+    // than it has to be replaced by right down or up node(key value)
+    // and under function find replaceable node
+    public static Element findReplaceableNode(Element e){
+        Element replace;
+        if(e.getRChild() != null){
+            replace = e.getRChild();
+            while(replace.getLChild()!=null)
+                replace = replace.getLChild();
+        }else if(e.getLChild() != null){
+            replace = e.getLChild();
+            while(replace.getRChild()!=null)
+                replace = replace.getRChild();
+        }else{
+            return null;
+        }
+        return replace;
     }
 }
