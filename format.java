@@ -17,7 +17,6 @@ public class Main{
         
         String str = br.readLine();
 
-        bw.write(Integer.toString(dp[str2.length()][str1.length()]));
         bw.flush();
         bw.close();
         br.close();
