@@ -1,5 +1,3 @@
-import com.sun.management.VMOption.origin;
-
 /*
     Segment Tree of sum
     ref: https://www.acmicpc.net/blog/view/9
