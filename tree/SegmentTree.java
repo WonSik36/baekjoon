@@ -1,4 +1,4 @@
-import com.sun.management.VMOption.Origin;
+import com.sun.management.VMOption.origin;
 
 /*
     Segment Tree of sum
@@ -12,9 +12,10 @@ import com.sun.management.VMOption.Origin;
 
 public class SegmentTree{
     private int[] treeArr;
+    private int[] originArr;
     private int size;
     private int height;
-    private int OriginLen;
+    private int originLen;
 
     public static void main(String[] args){
         int[] arr = new int[]{0,1,2,3,4,5,6,7,8,9};
@@ -29,17 +30,18 @@ public class SegmentTree{
     }
 
     public SegmentTree(int[] arr){
-        OriginLen = arr.length;
-        height = (int)Math.ceil(baseLog(OriginLen,2));
+        originLen = arr.length;
+        height = (int)Math.ceil(baseLog(originLen,2));
         size = (int)Math.pow(2,height+1);
         treeArr = new int[size];
-        init(arr, 1, 0, arr.length-1);
+        originArr = arr.clone();
+        init(arr, 1, 0, originLen-1);
     }   
 
     /* 
         arr: input array
         node: segment tree node number
-        start - end: range of node
+        start - end: array range of node covers, not tree array
     */
     public int init(int[] arr, int node, int start, int end){
         if(start == end)
@@ -50,13 +52,13 @@ public class SegmentTree{
     }
 
     public int sum(int left, int right){
-        return __sum(1,0,OriginLen-1,left,right);
+        return __sum(1,0,originLen-1,left,right);
     }
 
     /*
         node: segment tree node number
-        start - end: range of node
-        right - left: what we want to find range of sum
+        start - end: array range of node covers, not tree array
+        right - left: what we want to find array range of sum, not tree array
     */
     public int __sum(int node, int start, int end, int left, int right){
         if(end<left || start>right)
@@ -68,13 +70,14 @@ public class SegmentTree{
     }
 
     public void update(int idx, int ch){
-        int diff = ch - treeArr[idx];
-        __update(1,0,OriginLen-1,idx,diff);
+        int diff = ch - originArr[idx];
+        originArr[idx] = ch;
+        __update(1,0,originLen-1,idx,diff);
     }
 
     /*
         node: segment tree node number
-        start - end: range of node
+        start - end: array range of node covers, not tree array
         idx: what we want to change value
         diff: difference between original and appended
     */
