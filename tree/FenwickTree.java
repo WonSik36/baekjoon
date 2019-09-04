@@ -59,6 +59,7 @@ public class FenwickTree{
     }
 
     public void init(int[] arr){
+        // call update function linearly
         for(int i=0;i<length;i++){
             update(i+1,arr[i]);
         }
@@ -71,6 +72,7 @@ public class FenwickTree{
     }
 
     // update idx node to upper node 
+    // upper node L[Node] cover idx node
     public void __update(int idx, int diff){
         while(idx <= length){
             // System.out.print(treeArr[idx]+ " ");
@@ -83,7 +85,11 @@ public class FenwickTree{
     public int sum(int start, int end){
         return __sum(end) - __sum(start-1);
     }
-
+    
+    // when calculate sum of 1-10
+    // 10 is binary 1010
+    // than treeArr[1010] + treeArr[1000] is sum of 1-10
+    // see the picture of https://www.acmicpc.net/blog/view/21
     public int __sum(int idx){
         int ret = 0;
         while(idx>0){
