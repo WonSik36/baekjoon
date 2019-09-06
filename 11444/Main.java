@@ -51,12 +51,12 @@ public class Main{
         }
 
         final long mod = 1000000007;
-        int col = A.length;
-        int row = B[0].length;
-        long[][] C = new long[col][row];
+        int row = A.length;
+        int col = B[0].length;
+        long[][] C = new long[row][col];
 
-        for(int i=0;i<col;i++){
-            for(int j=0;j<row;j++){
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
                 for(int k=0;k<A[0].length;k++){
                     C[i][j] += A[i][k] * B[k][j];
                 }
