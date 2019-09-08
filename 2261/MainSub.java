@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.lang.Comparable;
 
-public class Main{
+public class MainSub{
     public static void main(String[] args)throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -122,7 +122,6 @@ public class Main{
         // printList(subList);
         for(int i=0;i<subList.size()-1;i++){
             int j = i+1;
-            // this is important that power distance
             while((j <subList.size()) && ((int)Math.pow(subList.get(j).Y - subList.get(i).Y,2) < d)){
                 int compDist = getDistancePow(subList.get(i), subList.get(j));
                 // System.out.printf("compare sublist[%d : %d]: %d, given dist: %d\n",i,j,compDist,d);
@@ -143,16 +142,29 @@ public class Main{
     }
 
     public static  ArrayList<Point> inRange(ArrayList<Point> list, int mid, int dist, int first, int last){
-        ArrayList<Point> sub = new ArrayList<Point>();
-        for(int i=first;i<=last;i++){
-            int d = mid - list.get(i).X;
-            // this is important that power distance
-            if(dist>d*d)
-                sub.add(list.get(i));
+        int sqrtDist = (int)Math.ceil(Math.sqrt(dist));
+        int start = mid - sqrtDist;
+        int end = mid + sqrtDist;
+        int left = 0;
+        int right = 0;
+        // get left idx of array
+        for(int i=(first+last)/2;i>=first;i--){
+            if(start <= list.get(i).X && end >= list.get(i).X){
+                left = i;
+            }
         }
+        //get right idx of array
+        for(int i=(first+last)/2+1;i<=last;i++){
+            if(start <= list.get(i).X && end >= list.get(i).X){
+                right = i;
+            }
+        }
+
+        // it returns sub array at least has list[0]
+        ArrayList<Point> sub = new ArrayList<Point>(list.subList(left, right+1));
         // System.out.printf("mid: %d, dist: %d, first: %d, last: %d ",mid,dist,first,last);
         // printList(sub);
-
+    
         return sub;
     }
 
