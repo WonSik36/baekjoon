@@ -159,12 +159,14 @@ public class MainSub{
                 right = i;
             }
         }
-
-        // it returns sub array at least has list[0]
-        ArrayList<Point> sub = new ArrayList<Point>(list.subList(left, right+1));
-        // System.out.printf("mid: %d, dist: %d, first: %d, last: %d ",mid,dist,first,last);
-        // printList(sub);
-    
+        
+        ArrayList<Point> sub = null;
+        // this is really important when right or left doesn't have value
+        if(left>=right){
+            sub = new ArrayList<Point>();
+        }else{
+            sub = new ArrayList<Point>(list.subList(left, right+1));
+        }
         return sub;
     }
 
