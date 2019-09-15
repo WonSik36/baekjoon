@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import java.io.IOException;
 
 public class Main{
+    static final boolean DEBUG = false;
     public static void main(String[] args)throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
