@@ -25,6 +25,11 @@ public class Main{
         br.close();
     }
 
+    public static void print(int num){
+        if(DEBUG)
+            System.out.println(num);
+    }
+
     public static void print(String str){
         if(DEBUG)
             System.out.print(str);
@@ -41,6 +46,15 @@ public class Main{
                     output += spl[idx++];
             }
             System.out.print(output);
+        }
+    }
+
+    public static void printArray(int[] arr){
+        if(DEBUG){
+            for(int i=0;i<arr.length;i++){
+                System.out.print(arr[i]+" ");
+            }
+            System.out.println();
         }
     }
 }
