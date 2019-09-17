@@ -189,6 +189,7 @@ public class PriorityQueue<E extends Comparable<E>>{
         return idx*2+1;
     }
 
+    @SuppressWarnings("unchecked")
     private int getMaxChildIdx(int idx){
         if(getLchild(idx)>size)
             return -1;
