@@ -1,7 +1,7 @@
 /*
     baekjoon online judge
-    problem number 11279
-    https://www.acmicpc.net/problem/11279
+    problem number 11286
+    https://www.acmicpc.net/problem/11286
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
