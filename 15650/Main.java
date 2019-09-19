@@ -1,8 +1,7 @@
 /*
     baekjoon online judge
-    problem number 15649
-    https://www.acmicpc.net/problem/15649
-    https://yabmoons.tistory.com/115 for encapsulate dfs
+    problem number 15650
+    https://www.acmicpc.net/problem/15650
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.HashSet;
 
 public class Main{
     static BufferedWriter bw;
@@ -26,6 +26,8 @@ public class Main{
         int M = Integer.parseInt(st.nextToken());
 
         Graph g = new Graph(N, new BackTrace(){
+            public ArrayList<HashSet<Integer>> list = new ArrayList<HashSet<Integer>>();
+            public int comb = combination(N, M);
             public int init(ArrayList<Integer> list, int vertex){
                 int ret = 0;
                 for(int i=1;i<=N;i++){
@@ -40,6 +42,16 @@ public class Main{
                 arr[cur] = false;
             }
             public void printPath(int[] path){
+                //convert path array to Hash set
+                ArrayList<Integer> temp = new ArrayList<Integer>();
+                for(int i=0;i<path.length;i++){
+                    temp.add(path[i]);
+                }
+                HashSet<Integer> set = new HashSet<Integer>(temp);
+                if(list.contains(set))
+                    return;
+                list.add(set);
+
                 try{
                     for(int i=0;i<path.length;i++){
                         bw.write(Integer.toString(path[i])+" ");
@@ -50,6 +62,8 @@ public class Main{
                 }
             }
             public boolean isDone(){
+                if(comb == list.size())
+                    return true;
                 return false;
             }
         });
@@ -158,5 +172,22 @@ public class Main{
         public void Coloring(int cur, boolean[] arr);
         public void printPath(int[] path);
         public boolean isDone();
+    }
+
+    public static int combination(int N, int K){
+        int ret = 1;
+
+        for(int i=N;i>(N-K);i--)
+            ret *= i;
+
+        ret /= factorial(K);
+        return ret;
+    }
+
+    public static int factorial(int N){
+        int ret = 1;
+        for(int i=2;i<=N;i++)
+            ret *= i;
+        return ret;
     }
 }
