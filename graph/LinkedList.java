@@ -46,6 +46,19 @@ public class LinkedList implements Iterable<Node>{
         }
         System.out.print(list.toString());
         System.out.println("Test3 complete\n");
+
+        // test4
+        System.out.println("Test4 start");
+        it = list.iterator();
+        try{
+            it.remove();
+        }catch(RuntimeException e){
+            it = null;
+        }
+        if(it == null)
+            System.out.println("Test4 complete\n");
+        else
+            System.out.println("Test4 failed\n");
     }
 
     public LinkedList(){
