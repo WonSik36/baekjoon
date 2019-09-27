@@ -18,6 +18,7 @@ public class Deprecated{
     static final int[] COUPON = {0,1,2};
     static final int TYPENUM = 3;
     static int MIN_PRICE = Integer.MAX_VALUE;
+    static int CNT = 0;
     public static void main(String[] args)throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -34,6 +35,7 @@ public class Deprecated{
         calculateDays(N, days);
 
         bw.write(Integer.toString(MIN_PRICE)+"\n");
+        bw.write(Integer.toString(CNT)+"\n");
         bw.flush();
         bw.close();
         br.close();
@@ -44,10 +46,13 @@ public class Deprecated{
     }
 
     public static void _calculateDays(int day, int N, int[] abDays, int price, int couponNum){
-        if((price >= MIN_PRICE) || (day > N))
+        if((price >= MIN_PRICE) || (day > N)){
+            CNT++;
             return;
+        }
 
         if(day == N){
+            CNT++;
             MIN_PRICE = price;
             return;
         }
