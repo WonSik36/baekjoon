@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class Deprectead{
+public class Deprecated{
     static final int[] SPENDDAYS = {1,3,5};
     static final int[] COST = {10000,25000,37000};
     static final int[] COUPON = {0,1,2};
@@ -44,7 +44,7 @@ public class Deprectead{
     }
 
     public static void _calculateDays(int day, int N, int[] abDays, int price, int couponNum){
-        if(price >= MIN_PRICE)
+        if((price >= MIN_PRICE) || (day > N))
             return;
 
         if(day == N){
@@ -61,8 +61,10 @@ public class Deprectead{
             _calculateDays(day+1,N,abDays,price,couponNum-3);
         }
 
+        int gap = getGapDay2AbDay(day+1, abDays);
+
         for(int i=0;i<TYPENUM;i++){
-            if(day+SPENDDAYS[i] <= N)
+            if(gap <= SPENDDAYS[i]+1)
                 _calculateDays(day+SPENDDAYS[i],N,abDays,price+COST[i],couponNum+COUPON[i]);
         }
 
@@ -76,5 +78,22 @@ public class Deprectead{
                 break;
         }
         return false;
+    }
+
+    public static int getGapDay2AbDay(int day, int[] days){
+        int gap = 0;
+
+        for(int i=0;i<days.length;i++){
+            gap = days[i] - day;
+            if(gap > 0)
+                break;
+        }
+
+        if(gap > 5)
+            return 5;
+        else if(gap < 0)
+            return 0;
+        else
+            return gap;
     }
 }
