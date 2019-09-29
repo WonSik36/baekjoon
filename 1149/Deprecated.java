@@ -4,6 +4,7 @@
     https://www.acmicpc.net/problem/1149
     Dynamic Programming
     Recurssively solve, so memory excess happened
+    And it was wrong answer because it ignore 2 options when 1 is chosen
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
