@@ -1,6 +1,6 @@
 /*
     ACM-ICPC Regional 2018
-    Problem 
+    Problem A
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
