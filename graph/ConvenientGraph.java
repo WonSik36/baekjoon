@@ -1,19 +1,20 @@
 /*
     To execute this program
     1. cd C:\Users\wonsik\Documents
-    2. javac .\baekjoon\graph\Node.java .\baekjoon\graph\LinkedList.java .\baekjoon\graph\Graph.java
-    3. java baekjoon.graph.Graph
+    2. javac .\baekjoon\graph\Node.java .\baekjoon\graph\ConvenientGraph.java
+    3. java baekjoon.graph.ConvenientGraph
 */
 package baekjoon.graph;
 import java.util.Iterator;
+import java.util.ArrayList;
 
-public class Graph{
-    private LinkedList[] adjList;
+public class ConvenientGraph{
+    private ArrayList<ArrayList<Node>> adjList;
     private int vertex;
     private int edge;
 
     public static void main(String[] args){
-        Graph g = new Graph(5);
+        ConvenientGraph g = new ConvenientGraph(5);
 
         // test 1
         g.addEdge(1, 2, 1);
@@ -29,7 +30,7 @@ public class Graph{
         System.out.println(g.toString());
 
         // test 3
-        LinkedList list = g.getList(1);
+        ArrayList<Node> list = g.getList(1);
         Iterator<Node> it = list.iterator();
         System.out.print("Node 1 has edge\n");
         while(it.hasNext()){
@@ -51,23 +52,26 @@ public class Graph{
         // To: 5, W: 6
     }
 
-    public Graph(int N){
+    public ConvenientGraph(int N){
         this.vertex = N;
         this.edge = 0;
-        adjList = new LinkedList[N+1];
-        for(int i=1;i<=N;i++){
-            adjList[i] = new LinkedList();
+        adjList = new ArrayList<ArrayList<Node>>();
+        for(int i=0;i<N;i++){
+            adjList.add(new ArrayList<Node>());
         }
     }
 
     public String toString(){
         String ret = "";
-        for(int i=1;i<adjList.length;i++){
-            Iterator<Node> it = adjList[i].iterator();
-            ret += ("Node["+i+"]: ");
+        for(int i=0;i<adjList.size();i++){
+            ArrayList<Node> list = adjList.get(i);
+            ret += ("Node["+(i+1)+"]: ");
+
+            Iterator<Node> it = list.iterator();
             while(it.hasNext()){
-                int node = it.next().getNodeNum();
-                ret += (node+" ");
+                Node node = it.next(); 
+                int nodeNum = node.getNodeNum(); 
+                ret += (nodeNum+" ");
             }
             ret += "\n";
         }
@@ -83,12 +87,14 @@ public class Graph{
     }
 
     public void addEdge(int start, int end, int weight){
-        adjList[start].addEdge(end,weight);
-        adjList[end].addEdge(start,weight);
+        ArrayList<Node> list = adjList.get(start-1);
+        list.add(new Node(end, weight));
+        list = adjList.get(end-1);
+        list.add(new Node(start, weight));
         edge++;
     }
 
-    public LinkedList getList(int node){
-        return adjList[node];
+    public ArrayList<Node> getList(int node){
+        return adjList.get(node-1);
     }
 }
