@@ -13,18 +13,22 @@ public class BaekJoon{
         String problemNum = sc.nextLine();
         
         File file = new File("C:/Users/wonsik/Documents/baekjoon/"+problemNum);
-        file.mkdir();
-        BufferedReader br = new BufferedReader(new FileReader("C:/Users/wonsik/Documents/baekjoon/format.java"));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(file+"/Main.java"));
-        
-        while(true) {
-            String line = br.readLine();
-            if (line==null) break;
-            bw.write(line);
-            bw.write("\n");
+        if(file.exists()){
+            System.out.println("There is already "+problemNum+" directory.");
+        }else{
+            file.mkdir();
+            BufferedReader br = new BufferedReader(new FileReader("C:/Users/wonsik/Documents/baekjoon/format.java"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file+"/Main.java"));
+            
+            while(true) {
+                String line = br.readLine();
+                if (line==null) break;
+                bw.write(line);
+                bw.write("\n");
+            }
+            br.close();
+            bw.close();
+            sc.close();
         }
-        br.close();
-        bw.close();
-        sc.close();
     }
 }
