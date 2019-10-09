@@ -8,8 +8,8 @@
     (In java char is only unsigned varaible)
 */
 
-// import java.io.FileReader;
-// import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.OutputStreamWriter;
@@ -17,13 +17,15 @@ import java.io.BufferedWriter;
 import java.util.StringTokenizer;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Stack;
 
 public class Main{
+    static int cnt = 0;
     public static void main(String[] args)throws IOException{
-        // BufferedReader br = new BufferedReader(new FileReader("./1.in"));
-        // BufferedWriter bw = new BufferedWriter(new FileWriter("./1.out"));
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        BufferedReader br = new BufferedReader(new FileReader("./1.in"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter("./1.out"));
+        // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        // BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int N = Integer.parseInt(br.readLine());
         int[] score = new int[N];
@@ -49,51 +51,70 @@ public class Main{
         if(K > maxScore[N-1])
             return K;
 
-        // int[][] dp = new int[N][maxScore[N-1]+1];
         char[][] dp = new char[N][maxScore[N-1]/16+1];
 
-        // first problem
-        setBit(0, 0, dp);
-        setBit(0, maxScore[0], dp);
-
-        // dynamic programming
-        for(int i=1;i<N;i++){
-            int sum = 0;
-            // dp(0,i) = dp(0,i-1) + (dp(0,i-2)+sum(i,i)) + (dp(0,i-3)+sum(i-1,i)) + (dp(0,i-4)+sum(i-2,i))
-            // + ... + (dp(0,0) + sum(2,i)) + sum(1,i) + sum(0,i)
-            for(int j=i;j>=1;j--){
-                copyRangeBit(dp,j-1,maxScore[j-1],i,sum);
-                sum += score[j]*(i-j+1);
-            }
-            setBit(i, sum, dp);
-            setBit(i, maxScore[i], dp);
-        }
-
-        int minScore;
+        initDP(dp, N, score, maxScore);
+        // printDP(dp);
+        
         // verify score i is possible start form K
-        for(minScore=K; minScore<=maxScore[N-1]+1; minScore++){
-            if(!getBit(N-1, minScore,dp))
+        for(int minScore=K; minScore<=maxScore[N-1]+1; minScore++){
+            if(!isPossibleScore(N,minScore,dp,score,maxScore))
                 return minScore;
         }
         return -1;
     }
 
-    // copy previous array to current array
-    // copy range is 0 ~ prevMaxScore to curMaxScore ~ curMaxScore+prevMaxScore
-    public static void copyRangeBit(char[][] dp, int prev, int prevMaxScore, int cur, int curMaxScore){
-        int cur_th = curMaxScore /16;
-        int cur_r = curMaxScore %16;
-        int prev_th = prevMaxScore /16;
+    public static boolean isPossibleScore(int N, int K, char[][] dp, int[] score, int[] maxScore){
+        // System.out.println(cnt++);
+        if(K > maxScore[N-1])
+            return false;
         
-        if(cur_r == 0){
-            for(int i=0;i<=prev_th;i++){
-                dp[cur][cur_th+i] |= dp[prev][i];
+        char[][] visited = new char[N][maxScore[N-1]/16+1];
+        Stack<Pair> stack = new Stack<Pair>();
+        stack.add(new Pair(N-1,K));
+        Pair pair = null;
+
+        while(!stack.isEmpty()){
+            pair = stack.pop();
+
+            if(getBit(pair.left, pair.right, dp)){
+                // register dp[pair.left][pair.right] = 1 from true pair to ancestor pairs
+                registerPair2DP(pair, dp);
+                // System.out.printf("Pair %d %d is key\n",pair.left,pair.right); 
+                return true;
             }
-        }else{
-            for(int i=0;i<=prev_th;i++){
-                dp[cur][cur_th+i] |= (dp[prev][i] << cur_r);
-                dp[cur][cur_th+i+1] |= (dp[prev][i] >> (16 - cur_r));
+
+            System.out.printf("pair popped: %d %d\n",pair.left, pair.right);
+            int sum = 0;
+            for(int i=pair.left;i>0;i--){
+                if(pair.right-sum < 0)
+                    break;
+                else if(!getBit(i-1,pair.right-sum,visited)){
+                    System.out.printf("pair added: %d %d\n",i-1, pair.right-sum);
+                    stack.add(new Pair(i-1,pair.right-sum,pair));
+                    setBit(i-1,pair.right-sum,visited);
+                }else{
+                    System.out.printf("pair visited: %d %d\n",i-1, pair.right-sum);
+                }
+                sum += score[i]*(pair.left-i+1);
             }
+        }
+
+
+        return false;
+    }
+
+    public static void initDP(char[][] dp, int N, int[] score, int[] maxScore){
+        for(int i=0;i<N;i++){
+            int sum = 0;
+            for(int j=i;j>=1;j--){
+                sum += score[j]*(i-j+1);
+                setBit(i, sum, dp);
+            }
+
+            setBit(i, 0, dp);
+            setBit(i, score[i], dp);
+            setBit(i, maxScore[i], dp);
         }
     }
 
@@ -119,5 +140,46 @@ public class Main{
         if((dp[row][th] & (1<<r)) > 0)
             return true;
         return false;
+    }
+
+    public static void printDP(char[][] dp){
+        for(int i=0;i<dp.length;i++){
+            // System.out.printf("dp[%d]: ", i);
+            for(int j=0;j<dp[0].length;j++){
+                char temp = dp[i][j];
+                for(int k=0;k<16;k++){
+                    char one = 1;
+                    System.out.printf("%d ",(int)(one&temp));
+                    temp = (char)(temp>>1);
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public static class Pair{
+        public int left;
+        public int right;
+        public Pair parent;
+
+        public Pair(int left, int right){
+            this.left = left;
+            this.right = right;
+        }
+
+        public Pair(int left, int right, Pair parent){
+            this(left,right);
+            this.parent = parent;
+        }
+    }
+
+    public static void registerPair2DP(Pair pair, char[][] dp){
+        Pair temp = pair;
+        
+        while(temp != null){
+            // System.out.printf("Pair %d %d is possible\n",temp.left,temp.right);
+            setBit(temp.left,temp.right,dp);
+            temp = temp.parent;
+        }
     }
 }
