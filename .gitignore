@@ -1,4 +1,5 @@
 *.class
 *.txt
 *.exe
-rand.in
+*.in
+*.out
