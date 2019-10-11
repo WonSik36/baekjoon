@@ -2,6 +2,8 @@
     baekjoon online judge
     problem number 10273
     https://www.acmicpc.net/problem/10273
+    https://handongproblemsolvers.github.io/2019/10/11/Week_06_Contest_Problem_Solving/#%EA%B3%A0%EB%8C%80-%EB%8F%99%EA%B5%B4-%ED%83%90%EC%82%AC
+    I wrongly implemented DFS(never visit visted node)
 */
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -59,14 +61,15 @@ public class Main{
     }
 
     public static class Graph{
+        // initialized by main function
         private ArrayList<ArrayList<Node>> adjList;
         private int vertex;
         private int edge;
         private int[] vertexValue;
+        // for dfs
         private int[] value;
         private int[] parent;
-        private String path;
-        private ArrayList<ArrayList<Integer>> visited;
+        private boolean[] visited;
         private int maxValue;
 
         public Graph(int N){
@@ -79,9 +82,13 @@ public class Main{
             this.vertexValue = new int[N+1];
         }
 
+        // print maximum value and visited node count on 1st line
+        // path of maximum value on 2nd line
         public void printResult(BufferedWriter bw)throws IOException{
             int idx = 1;
             int cnt = 0;
+            // print 1st line
+            // get cnt
             while(idx != -1){
                 cnt++;  
                 idx = parent[idx];
@@ -89,25 +96,13 @@ public class Main{
             String str = String.format("%d %d\n",maxValue,cnt);
             bw.write(str);
 
+            // print 2nd line
             idx = 1;
             while(idx != -1){
                 bw.write(Integer.toString(idx)+" ");
                 idx = parent[idx];
             }
             bw.write("\n");
-        }
-
-
-        public int getMaxPathCnt(){
-            path = "";
-            return _getMaxPathCnt(1);
-        }
-
-        public int _getMaxPathCnt(int i){
-            path = (path + i + " ");
-            if(parent[i] == -1)
-                return 1;
-            return _getMaxPathCnt(parent[i])+1;
         }
     
         public int getVertex(){
@@ -133,32 +128,32 @@ public class Main{
             value = new int[vertex+1];
             parent = new int[vertex+1];
             Arrays.fill(parent, -1);
-            visited = new ArrayList<ArrayList<Integer>>();
-            for(int i=0;i<vertex;i++){
-                visited.add(new ArrayList<Integer>());
-            }
+            visited = new boolean[vertex+1];
             maxValue = 0;
+
             // execute DFS
             maxValue = _DFS(1);
         }
 
+        //***/
         public int _DFS(int cur){
-            if(value[cur] != 0)
+            // if visited(= already calculated) return memoized value
+            if(visited[cur])
                 return value[cur];
+            
+            visited[cur] = true;
 
             Iterator<Node> it = getList(cur).iterator();
             while(it.hasNext()){
                 Node temp = it.next();
                 int num = temp.getNodeNum();
-                if(visited.get(cur-1).contains(Integer.valueOf(num)))
-                    continue;
+
                 int weight = temp.getWeight();
                 int tempValue = _DFS(temp.getNodeNum()) - weight;
                 if(tempValue > value[cur]){
                     value[cur] = tempValue;
                     parent[cur] = num;
                 }
-                visited.get(cur-1).add(num);
             }
             value[cur] += vertexValue[cur];
             return value[cur];
