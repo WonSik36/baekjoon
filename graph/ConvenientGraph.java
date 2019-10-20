@@ -71,7 +71,8 @@ public class ConvenientGraph{
             while(it.hasNext()){
                 Node node = it.next(); 
                 int nodeNum = node.getNodeNum(); 
-                ret += (nodeNum+" ");
+                int weight = node.getWeight();
+                ret += String.format("%d[%d]", nodeNum, weight);
             }
             ret += "\n";
         }
