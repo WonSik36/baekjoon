@@ -1,10 +1,10 @@
 /*
     baekjoon online judge
-    problem number 11723
-    https://www.acmicpc.net/problem/11723
+    problem number 2098
+    https://www.acmicpc.net/problem/2098
     https://hsp1116.tistory.com/40
 
-    bit mask problem
+    Travelling Salesperson Problem
 */
 
 // import java.io.FileReader;
@@ -15,81 +15,80 @@ import java.io.OutputStreamWriter;
 import java.io.BufferedWriter;
 import java.util.StringTokenizer;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Main{
-    static final int MAX_MASK = 1048575;
+    static boolean DEBUG = false;
+    static final int INF = 10000000;
+    static final int MAX_MASK = 65535; // 2^16-1
     static final int MIN_MASK = 0;
     public static void main(String[] args)throws IOException{
+        if(args.length!=0 && args[0].equals("-d"))
+            DEBUG = true;
         // BufferedReader br = new BufferedReader(new FileReader("./1.in"));
         // BufferedWriter bw = new BufferedWriter(new FileWriter("./1.out"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         
-        int bit = 0;
+        // get N and make dist, and dp
         int N = Integer.parseInt(br.readLine());
-        for(int i=0;i<N;i++){
+        int[][] dist = new int[N+1][N+1];
+        int[][] dp = new int[N+1][(int)Math.pow(2, N)];
+        for(int i=1;i<=N;i++){
+            Arrays.fill(dist[i],INF);
+            dist[i][i] = 0;
+        }
+
+        // get edges
+        for(int i=1;i<=N;i++){
             StringTokenizer st = new StringTokenizer(br.readLine());
-            String command = st.nextToken();
-            int num;
-            switch(command){
-                case "add":
-                    num = Integer.parseInt(st.nextToken());
-                    bit = add(bit,num);
-                    // printBit(bit);
-                    break;
-                case "remove":
-                    num = Integer.parseInt(st.nextToken());
-                    bit = remove(bit,num);
-                    // printBit(bit);
-                    break;
-                case "check":
-                    num = Integer.parseInt(st.nextToken());
-                    if(check(bit,num))
-                        bw.write("1\n");
-                    else
-                        bw.write("0\n");
-                    // printBit(bit);
-                    break;
-                case "toggle":
-                    num = Integer.parseInt(st.nextToken());
-                    bit = toggle(bit, num);
-                    // printBit(bit);
-                    break;
-                case "all":
-                    bit = MAX_MASK;
-                    // printBit(bit);
-                    break;
-                case "empty":
-                    bit = MIN_MASK;
-                    // printBit(bit);
-                    break;
+            for(int j=1;j<=N;j++){
+                int w = Integer.parseInt(st.nextToken());
+                if(w != 0)
+                    dist[i][j] = w;
             }
         }
+
+
+
 
         bw.flush();
         bw.close();
         br.close();
     }
 
+    
+
     public static int add(int bit, int idx){
-        int mask = 1<<(idx-1);
+        int mask = 1<<idx;
         return bit|mask;
     }
 
     public static int remove(int bit, int idx){
-        int mask = 1<<(idx-1);
-        return bit&(~mask);
+        int mask = 1;
+        for(int i=1;i<idx;i++){
+            mask *= 2;
+        }
+        mask = mask^MAX_MASK;
+        return bit&mask;
     }
 
     public static boolean check(int bit, int idx){
-        int mask = 1<<(idx-1);
+        int mask = 1;
+        for(int i=1;i<idx;i++){
+            mask *= 2;
+        }
         int res = mask&bit;
         return res>0?true:false;
     }
 
     public static int toggle(int bit, int idx){
-        int mask = 1<<(idx-1);
-        return bit^mask;
+        int res;
+        if(check(bit,idx))
+            res = remove(bit,idx);
+        else
+            res = add(bit,idx);
+        return res;
     }
 
     public static void printBit(int bit){
