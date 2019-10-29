@@ -4,15 +4,12 @@
     https://www.acmicpc.net/problem/1086
 
     Travelling Salesperson Problem
+    but dp is not dp[cur][visited] instead dp[visited][remainder]
     reference
     https://www.acmicpc.net/problem/2098
     https://hsp1116.tistory.com/40
 */
 
-package baekjoon_debug;
-
-// import java.io.FileReader;
-// import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.OutputStreamWriter;
@@ -27,8 +24,6 @@ public class Main{
     static int MAX_MASK; // 2^N-1
     static final int MIN_MASK = 0;
     public static void main(String[] args)throws IOException{
-        //  BufferedReader br = new BufferedReader(new FileReader("C:/Users/wonsik/Documents/workspace/eclipse_project/baekjoon_debug/src/baekjoon_debug/in.txt"));
-        //  BufferedWriter bw = new BufferedWriter(new FileWriter("C:/Users/wonsik/Documents/workspace/eclipse_project/baekjoon_debug/src/baekjoon_debug/out.txt"));
        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         
@@ -67,51 +62,46 @@ public class Main{
     */
     // hidden input: N,K
     public static long TSP(String[] arr){
-        long[][] dp = new long[N+1][(int)Math.pow(2, N)]; // i: current position, j: visited Node
+        long[][] dp = new long[(int)Math.pow(2, N)][K]; // i: visited Node, j: remainder
         int[] mod10Pow = new int[50*15+1]; // 10^idx mod K
         int[] numArr = modArr(arr, mod10Pow);
         int[] lenOfArr = getLenOfArr(arr);
+        reset(dp); // fill dp with -1
         Arrays.fill(mod10Pow, -1);
-        long sum = 0;
-        for(int i=0;i<arr.length;i++){
-            reset(dp);
-            sum += _TSP(i,add(0,i),0,0,numArr,dp,mod10Pow,lenOfArr);
-        }
-        return sum;
+        return _TSP(0,0,0,numArr,dp,mod10Pow,lenOfArr); 
     }
 
     // hidden input: N,K
-    // cur: current position, visited: visited nodes before current node
-    // r: remainder, len: length in decimal
+    // visited: visited nodes before current node, r: remainder, len: length in decimal
     // arr: array of given input numbers modulo by K, dp: i is cur, j is visited
     // dp[i][j] is right answers, lenOfArr: length of array i
-    public static long _TSP(int cur, int visited, int r, int len, int[] numArr, long[][] dp, int[] mod10Pow, int[] lenOfArr){
-    	int mod10 = mod10Pow[len];
-    	if(mod10 == -1) {
-    		mod10 = getPowerOf10(len, K);
-    		mod10Pow[len] = mod10;
-    	}
-        r = (r + ((numArr[cur])*mod10))%K;
+    public static long _TSP(int visited, int r, int len, int[] numArr, long[][] dp, int[] mod10Pow, int[] lenOfArr){
 
+    	if(dp[visited][r] != -1)
+            return dp[visited][r];
+    	
         // visited all node
         if(visited == MAX_MASK){
-            r = r%K;
             if(r == 0)
                 return 1;
             else
                 return 0;
         }
 
-        if(dp[cur][visited] != -1)
-            return dp[cur][visited];
+        int mod10 = mod10Pow[len];
+    	if(mod10 == -1) {
+    		mod10 = getPowerOf10(len, K);
+    		mod10Pow[len] = mod10;
+    	}
         
         long sum = 0;
         for(int i=0;i<N;i++){
             if(check(visited,i))
                 continue;
-            sum += _TSP(i, add(visited,i), r,len+lenOfArr[cur],numArr,dp,mod10Pow,lenOfArr);
+            int tmpR = (r + ((numArr[i])*mod10))%K; 
+            sum += _TSP(add(visited,i),tmpR,len+lenOfArr[i],numArr,dp,mod10Pow,lenOfArr);
         }
-        dp[cur][visited] = sum;
+        dp[visited][r] = sum;
         return sum;
     }
     
@@ -201,46 +191,5 @@ public class Main{
         int mask = 1<<idx;
         int res = mask&bit;
         return res>0?true:false;
-    }
-
-    public static String stringBit(int bit){
-        boolean[] res = new boolean[N];
-        String ret = "";
-
-        // calculate result
-        for(int i=0;i<N;i++){
-            if(bit%2 == 1)
-                res[N-i-1] = true;
-            bit /= 2;
-        }
-
-        // print it
-        for(int i=0;i<N;i++){
-            if(res[i])
-                ret+="1";
-            else
-                ret+="0";
-        }
-        return ret;
-    }
-
-    public static void printBit(int bit){
-        boolean[] res = new boolean[N];
-        
-        // calculate result
-        for(int i=0;i<N;i++){
-            if(bit%2 == 1)
-                res[N-i-1] = true;
-            bit /= 2;
-        }
-
-        // print it
-        for(int i=0;i<N;i++){
-            if(res[i])
-                System.out.print("1");
-            else
-                System.out.print("0");
-        }
-        System.out.println();
     }
 }
