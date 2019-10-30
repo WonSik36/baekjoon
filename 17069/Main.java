@@ -63,7 +63,7 @@ public class Main{
     // map: description of the room, dp: memoization of pos
     public static long _DFS(Pos cur, int N, int[][] map, long[][][] dp){
         // reach to final pos
-        Pos curEnd = cur.getEndPos();
+        Pos curEnd = policy.getEndPos(cur);
         if(curEnd.x==N-1 && curEnd.y==N-1)
             return 1;
         // if visited before than return memoized value
@@ -127,21 +127,9 @@ public class Main{
             return list;
         }
 
-        public Pos getEndPos(){
-            switch(this.type){
-                case HORIZON:
-                    return new Pos(x+1,y,PipeType.HORIZON);
-                case VERTICAL:
-                    return new Pos(x,y+1,PipeType.VERTICAL);
-                case DIAGONAL:
-                    return new Pos(x+1,y+1,PipeType.DIAGONAL);
-                default: throw new AssertionError("Unkown Value: "+this.type.toString());
-            }
-        }
-
         // return true when list is in range 0~N
         private static boolean isPossiblePos(Pos pos){
-            Pos end = pos.getEndPos();
+            Pos end = policy.getEndPos(pos);
             
             if(pos.x<0)
                 return false;
@@ -221,6 +209,7 @@ public class Main{
     public static interface Policy{
         public ArrayList<Pos> getNextPosList(Pos pos);
         public boolean isPossiblePos(Pos pos, int[][] map);
+        public Pos getEndPos(Pos pos);
     }
 
     public static class PolicyImpl implements Policy{
@@ -250,7 +239,7 @@ public class Main{
         }
 
         public boolean isPossiblePos(Pos pos, int[][] map){
-            Pos endPos = pos.getEndPos();
+            Pos endPos = getEndPos(pos);
             if(PosType.valueOf(map[pos.y][pos.x]) == PosType.WALL)
                 return false;
             if(PosType.valueOf(map[endPos.y][endPos.x]) == PosType.WALL)
@@ -266,5 +255,21 @@ public class Main{
     
             return true;
         }
+
+        public Pos getEndPos(Pos pos){
+            int x = pos.x;
+            int y = pos.y;
+
+            switch(pos.type){
+                case HORIZON:
+                    return new Pos(x+1,y,PipeType.HORIZON);
+                case VERTICAL:
+                    return new Pos(x,y+1,PipeType.VERTICAL);
+                case DIAGONAL:
+                    return new Pos(x+1,y+1,PipeType.DIAGONAL);
+                default: throw new AssertionError("Unkown Value: "+pos.type.toString());
+            }
+        }
+
     }
 }
