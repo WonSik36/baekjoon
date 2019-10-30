@@ -22,7 +22,6 @@ import java.util.Stack;
 import java.util.Iterator;
 
 public class Main{
-    private static Policy policy = new PolicyImpl();
     public static void main(String[] args)throws IOException{
         // BufferedReader br = new BufferedReader(new FileReader("./1.in"));
         // BufferedWriter bw = new BufferedWriter(new FileWriter("./1.out"));
@@ -32,7 +31,6 @@ public class Main{
         int N = Integer.parseInt(br.readLine());
         int[][] map = new int[N][N];
         Pos.setMaxLen(N);
-        Pos.setPolicy(policy);
 
         for(int i=0;i<N;i++){
             StringTokenizer st = new StringTokenizer(br.readLine());
@@ -74,7 +72,7 @@ public class Main{
         ArrayList<Pos> list = cur.getNextPosList();
         for(int i=0;i<list.size();i++){
             Pos tmp = list.get(i);
-            if(!policy.isPossiblePos(tmp, map))
+            if(!isPossiblePos(tmp, map))
                 continue;
             sum += _DFS(tmp,N,map,dp);
         }
@@ -82,6 +80,24 @@ public class Main{
         // memoize value
         dp[cur.y][cur.x][cur.type.getValue()] = sum;
         return sum;
+    }
+
+    public static boolean isPossiblePos(Pos pos, int[][] map){
+        Pos endPos = pos.getEndPos();
+        if(PosType.valueOf(map[pos.y][pos.x]) == PosType.WALL)
+            return false;
+        if(PosType.valueOf(map[endPos.y][endPos.x]) == PosType.WALL)
+            return false;
+            
+        // if tmp pipe type is Diagonal than check 2 pos more
+        if(pos.type == PipeType.DIAGONAL){
+            if(PosType.valueOf(map[pos.y+1][pos.x]) == PosType.WALL)
+                return false;
+            if(PosType.valueOf(map[pos.y][pos.x+1]) == PosType.WALL)
+                return false;
+        }
+
+        return true;
     }
 
     public static void initDP(long[][][] dp){
@@ -93,7 +109,6 @@ public class Main{
     }
 
     public static class Pos{
-        private static Policy policy;
         private static int maxX; //N
         private static int maxY; //N
         public int x;
@@ -106,10 +121,6 @@ public class Main{
             this.type = type;
         }
 
-        public static void setPolicy(Policy policyImpl){
-            policy = policyImpl;
-        }
-
         public static void setMaxLen(int len){
             maxX = len;
             maxY = len;
@@ -117,7 +128,25 @@ public class Main{
 
         // get next position which is in range 0~N
         public ArrayList<Pos> getNextPosList(){
-            ArrayList<Pos> list = policy.getNextPosList(this);
+            ArrayList<Pos> list = new ArrayList<Pos>();
+            
+            switch(this.type){
+                case HORIZON:
+                    list.add(new Pos(x+1,y,PipeType.HORIZON));
+                    list.add(new Pos(x+1,y,PipeType.DIAGONAL));    
+                    break;
+                case VERTICAL:
+                    list.add(new Pos(x,y+1,PipeType.VERTICAL));
+                    list.add(new Pos(x,y+1,PipeType.DIAGONAL));
+                    break;    
+                case DIAGONAL:
+                    list.add(new Pos(x+1,y+1,PipeType.HORIZON));
+                    list.add(new Pos(x+1,y+1,PipeType.VERTICAL));
+                    list.add(new Pos(x+1,y+1,PipeType.DIAGONAL));
+                    break;     
+                default: throw new AssertionError("Unkown Value: "+this.type.toString());
+            }
+
             Iterator<Pos> it = list.iterator();
             while(it.hasNext()){
                 if(!isPossiblePos(it.next()))
@@ -215,56 +244,6 @@ public class Main{
 
         public static int size(){
             return 2;
-        }
-    }
-
-    public static interface Policy{
-        public ArrayList<Pos> getNextPosList(Pos pos);
-        public boolean isPossiblePos(Pos pos, int[][] map);
-    }
-
-    public static class PolicyImpl implements Policy{
-        public ArrayList<Pos> getNextPosList(Pos pos){
-            ArrayList<Pos> list = new ArrayList<Pos>();
-            int x = pos.x;
-            int y = pos.y;
-
-            switch(pos.type){
-                case HORIZON:
-                    list.add(new Pos(x+1,y,PipeType.HORIZON));
-                    list.add(new Pos(x+1,y,PipeType.DIAGONAL));    
-                    break;
-                case VERTICAL:
-                    list.add(new Pos(x,y+1,PipeType.VERTICAL));
-                    list.add(new Pos(x,y+1,PipeType.DIAGONAL));
-                    break;    
-                case DIAGONAL:
-                    list.add(new Pos(x+1,y+1,PipeType.HORIZON));
-                    list.add(new Pos(x+1,y+1,PipeType.VERTICAL));
-                    list.add(new Pos(x+1,y+1,PipeType.DIAGONAL));
-                    break;     
-                default: throw new AssertionError("Unkown Value: "+pos.type.toString());
-            }
-
-            return list;
-        }
-
-        public boolean isPossiblePos(Pos pos, int[][] map){
-            Pos endPos = pos.getEndPos();
-            if(PosType.valueOf(map[pos.y][pos.x]) == PosType.WALL)
-                return false;
-            if(PosType.valueOf(map[endPos.y][endPos.x]) == PosType.WALL)
-                return false;
-                
-            // if tmp pipe type is Diagonal than check 2 pos more
-            if(pos.type == PipeType.DIAGONAL){
-                if(PosType.valueOf(map[pos.y+1][pos.x]) == PosType.WALL)
-                    return false;
-                if(PosType.valueOf(map[pos.y][pos.x+1]) == PosType.WALL)
-                    return false;
-            }
-    
-            return true;
         }
     }
 }
