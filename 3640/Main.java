@@ -2,23 +2,30 @@
     baekjoon online judge
     problem number 3640
     https://www.acmicpc.net/problem/3640
+    https://handongproblemsolvers.github.io/2019/10/28/Week_10_Contest_Problem_Solving/#%EC%A0%9C%EB%8F%85
 
     solve by MCMF but capacity is 1
+    and also need to know vertex splitting
+    (split input part and output part and from input to ouput capacity is 1
+    , but start node and end node's capacity is 2)
 
     MCMF(Minimum Cost Maximum Flow) Problem
     https://m.blog.naver.com/kks227/220810623254
 
     SPFA(Shortest Path Faster Algorithm) Problem
     https://www.crocus.co.kr/1089
+
+    I forgot this graph is one-way graph
+    in one-way graph inverse path has 0 capacity
 */
 
 // import java.io.FileReader;
 // import java.io.FileWriter;
-
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.OutputStreamWriter;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.util.StringTokenizer;
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,23 +41,47 @@ public class Main{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int V = Integer.parseInt(st.nextToken());
-        int E = Integer.parseInt(st.nextToken());
-        Graph g = new Graph(V);
+        while(true){
+            String input = br.readLine();
+            if(input == null)
+                break;
 
-        for(int i=0;i<E;i++){
-            st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
-            int weight = Integer.parseInt(st.nextToken());
+            StringTokenizer st = new StringTokenizer(input);
+            int V = Integer.parseInt(st.nextToken());
+            int E = Integer.parseInt(st.nextToken());
+            Graph g = new Graph(V*2); // vertex splitting without start and end
+            
+            // vertex splitting
+            // 1 -> 1,2 capacity:2
+            // 2 -> 3,4 capacity:1
+            // 3 -> 5,6 capacity:1
+            // 4 -> 7,8 capacity:1
+            // V(end) -> 2*V-1, 2*V capacity:2
+            g.addEdge(1,2,0,2);
+            g.addEdge(2*V-1,2*V,0,2);
+            for(int i=2;i<V;i++){
+                int in = 2*i-1, out = 2*i;
+                g.addEdge(in,out,0,1);
+            }
 
-            g.addEdge(start, end, weight);
+            for(int i=0;i<E;i++){
+                st = new StringTokenizer(br.readLine());
+                int start = Integer.parseInt(st.nextToken());
+                int end = Integer.parseInt(st.nextToken());
+                int weight = Integer.parseInt(st.nextToken());
+                
+                int startOut = start*2;
+                int endIn = end*2-1;
+                g.addEdge(startOut, endIn, weight,1);
+            }
+            
+            int first = 1; // starting node
+            int last = 2*V; // ending node
+            int sum = g.MCMF(first, last);
+    
+            bw.write(Integer.toString(sum)+"\n");
         }
 
-        int sum = g.MCMF(1, V);
-
-        bw.write(Integer.toString(sum)+"\n");
         bw.flush();
         bw.close();
         br.close();
@@ -133,11 +164,11 @@ public class Main{
         }
 
         public int MCMF(int start, int end){
+            // int maxFlow = 0;
             int sum = 0;
-            boolean[] visited = new boolean[vertex+1];
 
             //find augmented path
-            for(int k=0;k<2;k++){
+            while(true){
                 int[] prev = new int[vertex+1];
                 int[] dist = new int[vertex+1];
                 boolean[] inQ = new boolean[vertex+1];
@@ -158,10 +189,9 @@ public class Main{
                         Node tmp = it.next();
                         int tmpNum = tmp.getNodeNum();
 
-                        // 1. Node tmp is not visited
-                        // 2. edge from top to tmp should have remain flow
-                        // 3. edge from top to tmp + weight from start to top is shorter than weight from start to tmp
-                        if(!visited[tmpNum] && tmp.getRemain() > 0 && dist[tmpNum] > dist[top.getNodeNum()] + tmp.getWeight()){
+                        // 1. edge from top to tmp should have remain flow
+                        // 2. edge from top to tmp + weight from start to top is shorter than weight from start to tmp
+                        if(tmp.getRemain() > 0 && dist[tmpNum] > dist[top.getNodeNum()] + tmp.getWeight()){
                             dist[tmpNum] = dist[top.getNodeNum()] + tmp.getWeight();
                             prev[tmpNum] = top.getNodeNum();
                             
@@ -182,12 +212,9 @@ public class Main{
                 int minFlow = INF;
                 int totalWeight = 0;
                 for(int i=end;i!=start;i=prev[i]){
-                    visited[i] = true;
                     int remain = getEdge(prev[i],i).getRemain();
                     minFlow = minFlow<remain?minFlow:remain;
                 }
-                visited[start] = false;
-                visited[end] = false;
 
                 // add flow to every edge in the path
                 // get total weight
@@ -197,6 +224,7 @@ public class Main{
                     totalWeight += getEdge(prev[i],i).getWeight();
                 }
 
+                // maxFlow += minFlow;
                 sum += minFlow*totalWeight;
             }
 
@@ -230,11 +258,11 @@ public class Main{
         }
     
         // directed graph and from u to v there can be only one edge
-        public void addEdge(int start, int end, int weight){
+        public void addEdge(int start, int end, int weight, int capacity){
             ArrayList<Node> list = adjList.get(start-1);
-            list.add(new Node(end, weight));
-            // list = adjList.get(end-1);
-            // list.add(new Node(start, (-1)*weight));
+            list.add(new Node(end, weight,capacity));
+            list = adjList.get(end-1);
+            list.add(new Node(start, (-1)*weight,0));
             edge++;
         }
 
