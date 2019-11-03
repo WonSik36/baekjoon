@@ -2,6 +2,12 @@
     baekjoon online judge
     problem number 1315
     https://www.acmicpc.net/problem/1315
+    https://handongproblemsolvers.github.io/2019/10/28/Week_10_Contest_Problem_Solving/
+
+    I thought I had to save the state of the quest I solved.
+    But N is 100, than state can be N^100.
+    However, I did not need to memoize my current point 
+    by subtracting my current points from the total stats I earned.
 */
 
 // import java.io.FileReader;
@@ -12,9 +18,14 @@ import java.io.OutputStreamWriter;
 import java.io.BufferedWriter;
 import java.util.StringTokenizer;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main{
     static boolean DEBUG = false;
+    static int N;
+    static ArrayList<Quest> list;
+    static int[][] dp;
+    static int MAX_PNT = 1000;
     public static void main(String[] args)throws IOException{
         if(args.length!=0 && args[0].equals("-d"))
             DEBUG = true;
@@ -23,9 +34,10 @@ public class Main{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         
-        int N = Integer.parseInt(br.readLine());
-        ArrayList<Quest> list = new ArrayList<Quest>();
-        int maxPnt = 0;
+        N = Integer.parseInt(br.readLine());
+        list = new ArrayList<Quest>();
+        dp = new int[MAX_PNT+1][MAX_PNT+1];
+
         for(int i=0;i<N;i++){
             StringTokenizer st = new StringTokenizer(br.readLine());
             int STR = Integer.parseInt(st.nextToken());
@@ -35,9 +47,61 @@ public class Main{
             list.add(new Quest(STR,INT,PNT));
         }
 
+        int total = DFS(1,1);
+
+        bw.write(Integer.toString(total)+"\n");
         bw.flush();
         bw.close();
         br.close();
+    }
+
+    // hidden input
+    // N: total number of quest, list: list of quest, dp: memoization of quest solved at (i,j)
+    // input
+    // s: STR, i: INT
+    public static int DFS(int s, int i){
+    	// saturate stat
+    	if(s > MAX_PNT)
+    		s = MAX_PNT;
+    	if(i > MAX_PNT)
+    		i = MAX_PNT;
+        
+        // use memoized value
+        if(dp[s][i]!=0)
+            return dp[s][i];
+
+        int point = 0;
+        int total = 0;
+        for(int k=0;k<list.size();k++){
+            Quest q = list.get(k);
+            if(q.STR <= s || q.INT <= i){
+                point += q.PNT;
+                total++;
+            }
+        }
+
+        point -= (s+i-2); // init stat is (1,1)
+
+        // if solved all quest or no quest compare to before state  
+        if(total == N || point == 0) {
+        	dp[s][i] = total;
+            return dp[s][i];
+            
+        // else calculate DFS
+        }else {        	
+        	for(int k=0;k<=point;k++){
+        		total = Max(total, DFS(s+k, i+point-k));
+        		if(total == N)
+        			return N;
+        	}
+        	
+        	dp[s][i] = total;
+        	return total;
+        }
+    }
+
+    public static int Max(int a, int b){
+        return a>b?a:b;
     }
 
     public static class Quest{
@@ -49,39 +113,6 @@ public class Main{
             this.STR = STR;
             this.INT = INT;
             this.PNT = PNT;
-        }
-    }
-
-    public static void print(int num){
-        if(DEBUG)
-            System.out.println(num);
-    }
-
-    public static void print(String str){
-        if(DEBUG)
-            System.out.print(str);
-    }
-
-    public static void print(String str, int... ints){
-        if(DEBUG){
-            String[] spl = str.split("%d");
-            String output = spl[0];
-            int idx = 1;
-            for(int number:ints){
-                output += number;
-                if(idx < spl.length)
-                    output += spl[idx++];
-            }
-            System.out.print(output);
-        }
-    }
-
-    public static void printArray(int[] arr){
-        if(DEBUG){
-            for(int i=0;i<arr.length;i++){
-                System.out.print(arr[i]+" ");
-            }
-            System.out.println();
         }
     }
 }
