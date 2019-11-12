@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
 import java.io.IOException;
 
 public class Main{
-    static boolean DEBUG = false;
     public static void main(String[] args)throws IOException{
         if(args.length!=0 && args[0].equals("-d"))
             DEBUG = true;
@@ -28,38 +27,5 @@ public class Main{
         bw.flush();
         bw.close();
         br.close();
-    }
-
-    public static void print(int num){
-        if(DEBUG)
-            System.out.println(num);
-    }
-
-    public static void print(String str){
-        if(DEBUG)
-            System.out.print(str);
-    }
-
-    public static void print(String str, int... ints){
-        if(DEBUG){
-            String[] spl = str.split("%d");
-            String output = spl[0];
-            int idx = 1;
-            for(int number:ints){
-                output += number;
-                if(idx < spl.length)
-                    output += spl[idx++];
-            }
-            System.out.print(output);
-        }
-    }
-
-    public static void printArray(int[] arr){
-        if(DEBUG){
-            for(int i=0;i<arr.length;i++){
-                System.out.print(arr[i]+" ");
-            }
-            System.out.println();
-        }
     }
 }
