@@ -15,8 +15,6 @@ import java.io.IOException;
 
 public class Main{
     public static void main(String[] args)throws IOException{
-        if(args.length!=0 && args[0].equals("-d"))
-            DEBUG = true;
         // BufferedReader br = new BufferedReader(new FileReader("./1.in"));
         // BufferedWriter bw = new BufferedWriter(new FileWriter("./1.out"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
