@@ -10,6 +10,9 @@
     cf) binary search can be applied to monotonic function
 
     very deep reference level
+    
+    Update:
+    using int to long: overflow
 */
 
 // import java.io.FileReader;
@@ -46,11 +49,11 @@ public class Main{
     }
 
     public static long TernarySearch(int N, int[] arr){
-        int low = 0, high = arr[N-1];
+        long low = 0, high = arr[N-1];
 
         // get 3 possible low values
         while(high-low>=3){
-            int p = (low*2+high)/3, q = (low+high*2)/3;
+            long p = (low*2+high)/3, q = (low+high*2)/3;
             if(calculate(p, arr) < calculate(q, arr))
                 high = q;
             else
@@ -58,18 +61,18 @@ public class Main{
         }
 
         long min = INF;
-        for(int i=low;i<=high;i++){
+        for(long i=low;i<=high;i++){
             min = Min(min,calculate(i, arr));
         }
 
         return min;
     }
 
-    public static long calculate(int len, int[] arr){
+    public static long calculate(long len, int[] arr){
         long sum = 0;
 
         for(int i=0;i<arr.length;i++){
-            sum += (long)Math.abs((long)len*i - arr[i]);
+            sum += (long)Math.abs(len*i - arr[i]);
         }
 
         return sum;
