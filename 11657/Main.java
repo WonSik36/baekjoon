@@ -21,7 +21,7 @@ import java.lang.Comparable;
 
 public class Main{
     static boolean DEBUG = false;
-    static final int INF = 10000000;
+    static final long INF = Long.MAX_VALUE;
     public static void main(String[] args)throws IOException{
         if(args.length!=0 && args[0].equals("-d"))
             DEBUG = true;
@@ -41,12 +41,12 @@ public class Main{
             g.addEdge(start, end, weight);
         }
 
-        int[] res = bellmanFord(g, 1);
+        long[] res = bellmanFord(g, 1);
         if(res == null){
             bw.write("-1\n");
         }else{
             for(int i=2;i<=g.getVertex();i++){
-                bw.write(Integer.toString(res[i])+"\n");
+                bw.write(Long.toString(res[i])+"\n");
             }
         }
 
@@ -88,9 +88,9 @@ public class Main{
         }
     }
 
-    public static int[] bellmanFord(Graph g, int start){
+    public static long[] bellmanFord(Graph g, int start){
         // 1.initialize
-        int[] result = new int[g.getVertex()+1];
+        long[] result = new long[g.getVertex()+1];
         Arrays.fill(result, INF);
         result[start] = 0;
 
