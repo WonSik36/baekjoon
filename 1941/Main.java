@@ -4,6 +4,8 @@
     https://www.acmicpc.net/problem/1941
 
     Backtracking
+    
+    reference: https://www.acmicpc.net/board/view/46679
     Choose 7 Students from 25 (25 Combination 7)
     Then, Check 7 Students are connected
 */
@@ -74,8 +76,6 @@ public class Main{
         }
 
         for(int i=idx+1; i<=N*N-TOTAL_NUM+cnt; i++){
-            if(i == N*N)
-                break;
             checked[i/N][i%N] = true;
 
             if(map[i/N][i%N])
