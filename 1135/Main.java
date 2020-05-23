@@ -4,6 +4,7 @@
     https://www.acmicpc.net/problem/1135
 
     Tree with Greedy Algorithm
+    reference: https://velog.io/@eldpswp99/%EB%B0%B1%EC%A4%80-1135-%EB%89%B4%EC%8A%A4-%EC%A0%84%ED%95%98%EA%B8%B0
 */
 
 import java.io.InputStreamReader;
@@ -57,12 +58,7 @@ public class Main{
             timeList.add(dfs(adj.get(i), g, memo));
         }
 
-        Collections.sort(timeList, new Comparator<Integer>() {
-            @Override
-            public int compare(final Integer o1, final Integer o2) {
-                return (-1) * Integer.compare(o1, o2);
-            }
-        });
+        Collections.sort(timeList, Comparator.comparingInt((Integer i)->i).reversed());
 
         // greedy
         int sum = 0;
