@@ -5,6 +5,7 @@
 
     KMP Algorithm
     Using Failure Function
+    reference: https://www.acmicpc.net/source/11971835
 */
 
 import java.io.InputStreamReader;
@@ -26,27 +27,24 @@ public class Main{
             if(str.equals(END))
                 break;
 
-            int[] fail = getFail(str);
-            // printArr(fail);
-            int cnt = 0, idx = fail.length-1;
-
-            if(fail[idx] != fail.length-1 && fail[idx] != 0)
-                idx = fail[idx];
-
-            if(str.charAt(0) != str.charAt(idx)){
-                bw.write("1\n");
-            }else{
-                while(idx >= 0){
-                    idx = fail[idx]-1;
-                    cnt++;
-                }
-                
-                bw.write(Integer.toString(cnt)+"\n");
-            }
+            bw.write(Integer.toString(appKmp(str))+"\n");
         }
 
         bw.close();
         br.close();
+    }
+
+    public static int appKmp(String str){
+        int[] fail = getFail(str);
+        // printArr(fail);
+
+        int idx = fail[str.length()-1];
+        int pLen = str.length()-idx;
+
+        if(str.length() % pLen == 0)
+            return str.length() / pLen;
+        else
+            return 1;
     }
 
     public static void printArr(int[] arr){
