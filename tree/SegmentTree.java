@@ -79,7 +79,7 @@ public class SegmentTree<T>{
         start - end: array range of node covers, tree array
         left - right: what we want to find array range operation, not tree array
     */
-    public T __range(int node, int start, int end, int left, int right){
+    private T __range(int node, int start, int end, int left, int right){
         if(end<left || start>right)
             return this.dummy;
         else if(start>=left && end<=right)
@@ -104,7 +104,7 @@ public class SegmentTree<T>{
         System.out.println();
     }
 
-    public void __print(int idx){
+    private void __print(int idx){
         if(size <= idx)
             return;
         __print(2*idx);
