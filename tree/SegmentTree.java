@@ -7,32 +7,53 @@
     update procedure update target node and node's parent node so on
     sum procedure add node which is in range
 */
+import java.util.function.BinaryOperator;
 
-public class SegmentTree{
-    private int[] treeArr;
-    private int[] originArr;
-    private int size;
-    private int height;
-    private int originLen;
+public class SegmentTree<T>{
+    private T[] originArr;
+    private T[] treeArr;
+
+    private BinaryOperator<T> op;
+    private T dummy;
+
+    private final int size;
+    private final int height;
+    private final int originLen;
 
     public static void main(String[] args){
-        int[] arr = new int[]{0,1,2,3,4,5,6,7,8,9};
-        SegmentTree st = new SegmentTree(arr);
+        Integer[] arr = new Integer[]{0,1,2,3,4,5,6,7,8,9};
+        BinaryOperator<Integer> getSum = (a,b)->a+b;
 
-        System.out.println(st.sum(0,5));
-        System.out.println(st.sum(3,7));
+        SegmentTree<Integer> st = new SegmentTree<>(arr, getSum, 0);
+
+        System.out.println(st.range(0,5));
+        System.out.println(st.range(3,7));
         st.update(0, 10);
-        System.out.println(st.sum(0,5));
-        System.out.println(st.sum(3,7));
-        // st.print();
+        System.out.println(st.range(0,5));
+        System.out.println(st.range(3,7));
+
+        BinaryOperator<Integer> getMin = (a,b) -> (Math.min(a,b));
+        st = new SegmentTree<>(arr, getMin, Integer.MAX_VALUE);
+        
+        System.out.println(st.range(0,5));
+        System.out.println(st.range(3,7));
+        st.update(0, 10);
+        System.out.println(st.range(0,5));
+        System.out.println(st.range(3,7));
     }
 
-    public SegmentTree(int[] arr){
+    @SuppressWarnings("unchecked")
+    public SegmentTree(T[] arr, BinaryOperator<T> op, T dummy){
         originLen = arr.length;
         height = (int)Math.ceil(baseLog(originLen,2));
         size = (int)Math.pow(2,height+1);
-        treeArr = new int[size];
+
+        treeArr = (T[])new Object[size];
         originArr = arr.clone();
+
+        this.op = op;
+        this.dummy = dummy;
+
         init(arr, 1, 0, originLen-1);
     }   
 
@@ -41,51 +62,40 @@ public class SegmentTree{
         node: segment tree node number
         start - end: array range of node covers, not tree array
     */
-    public int init(int[] arr, int node, int start, int end){
+    public T init(T[] arr, int node, int start, int end){
         if(start == end)
             return treeArr[node] = arr[start];
         else{
-            return treeArr[node] = init(arr,2*node,start, (start+end)/2) + init(arr,2*node+1,(start+end)/2+1, end);
+            return treeArr[node] = op.apply(init(arr,2*node,start, (start+end)/2), init(arr,2*node+1,(start+end)/2+1, end));
         }
     }
 
-    public int sum(int left, int right){
-        return __sum(1,0,originLen-1,left,right);
+    public T range(int left, int right){
+        return __range(1,0,originLen-1,left,right);
     }
 
     /*
         node: segment tree node number
-        start - end: array range of node covers, not tree array
-        right - left: what we want to find array range of sum, not tree array
+        start - end: array range of node covers, tree array
+        left - right: what we want to find array range operation, not tree array
     */
-    public int __sum(int node, int start, int end, int left, int right){
+    public T __range(int node, int start, int end, int left, int right){
         if(end<left || start>right)
-            return 0;
+            return this.dummy;
         else if(start>=left && end<=right)
             return treeArr[node];
         else
-            return __sum(node*2, start, (start+end)/2, left, right) + __sum(node*2+1, (start+end)/2+1, end, left, right);
+            return op.apply(__range(node*2, start, (start+end)/2, left, right), __range(node*2+1, (start+end)/2+1, end, left, right));
     }
 
-    public void update(int idx, int ch){
-        int diff = ch - originArr[idx];
-        originArr[idx] = ch;
-        __update(1,0,originLen-1,idx,diff);
-    }
+    public void update(int oIdx, T updatedValue){
+        originArr[oIdx] = updatedValue;
+        int tIdx = findLeafIdx(oIdx, originLen);
+        treeArr[tIdx] = updatedValue;
 
-    /*
-        node: segment tree node number
-        start - end: array range of node covers, not tree array
-        idx: what we want to change value
-        diff: difference between original and appended
-    */
-    public void __update(int node, int start, int end, int idx, int diff){
-        if(idx>end || idx<start)
-            return;
-        treeArr[node] += diff;
-        if(start!=end){
-            __update(node*2, start, (start+end)/2, idx, diff);
-            __update(node*2+1, (start+end)/2+1, end, idx, diff);
+        while(tIdx > 1){
+            tIdx >>= 1;
+            treeArr[tIdx] = op.apply(treeArr[2*tIdx], treeArr[2*tIdx+1]);
         }
     }
 
@@ -102,7 +112,28 @@ public class SegmentTree{
         __print(2*idx+1);
     }
 
-    public static double baseLog(double x, double base){
+    private static double baseLog(double x, double base){
         return Math.log(x)/Math.log(base);
+    }
+
+    private static int findLeafIdx(int oIdx, int originLen){
+        int tIdx = 1;
+        int start = 0;
+        int end = originLen-1;
+
+        while(start != end){
+            int mid = (start+end)/2;
+
+            if(mid < oIdx){
+                start = mid+1;
+                tIdx <<= 1;
+                tIdx++;
+            }else{
+                end = mid;
+                tIdx <<= 1;
+            }
+        }
+
+        return tIdx;
     }
 }
