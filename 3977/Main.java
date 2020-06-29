@@ -3,7 +3,7 @@
     problem number 3977
     https://www.acmicpc.net/problem/3977
 
-    SCC(Strongly Connected Component) Algorithm
+    SCC(Strongly Connected Componenet) & Topological Sort
 */
 
 import java.io.InputStreamReader;
