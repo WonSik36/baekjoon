@@ -32,6 +32,13 @@ public class Main{
             max = Math.max(max, arr[i]);
         }
 
+        if(max == 0){
+            bw.write("0\n");
+            bw.close();
+            br.close();
+            return;
+        }
+
         int l = -1, r = max;
         while(l+1 < r){
             int mid = (l+r) >> 1;
