@@ -29,7 +29,7 @@ public class Main{
         int N = Integer.parseInt(br.readLine());
         Graph g = new Graph(N);
 
-        for(int i=1;i<N;i++){
+        for(int i=0;i<N-1;i++){
             st = new StringTokenizer(br.readLine());
             int start = Integer.parseInt(st.nextToken());
             int end = Integer.parseInt(st.nextToken());
@@ -38,8 +38,12 @@ public class Main{
             g.addEdge(start, end, weight);
         }
 
-        int diameter = g.getDiameter();
-        bw.write(Integer.toString(diameter)+"\n");
+        if(N == 1){
+            bw.write("0\n");
+        }else{
+            int diameter = g.getDiameter();
+            bw.write(Integer.toString(diameter)+"\n");
+        }
 
         bw.close();
         br.close();
