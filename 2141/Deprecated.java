@@ -11,8 +11,9 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.OutputStreamWriter;
 import java.io.BufferedWriter;
-import java.util.StringTokenizer;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.StringTokenizer;
 import java.util.List;
 import java.util.ArrayList;
 import static java.util.Comparator.comparingInt;
@@ -45,24 +46,24 @@ public class Main{
         while(l+2 < r) {
             long p = (l*2+r) / 3 , q = (l+r*2)/3;
 
-            long pDist = calcDistance(towns, p);
-            long qDist = calcDistance(towns, q);
+            BigInteger pDist = calcDistance(towns, p);
+            BigInteger qDist = calcDistance(towns, q);
 
-            System.out.printf("p: %d, q: %d\n", p, q);
-            System.out.printf("pDist: %d, qDist: %d\n", pDist, qDist);
+            // System.out.printf("p: %d, q: %d\n", p, q);
+            // System.out.printf("pDist: %s, qDist: %s\n", pDist.toString(), qDist.toString());
 
-            if(pDist <= qDist) {
+            if(pDist.compareTo(qDist) <= 0) {
                 r = q;
             } else {
                 l = p;
             }
         }
 
-        long min = Long.MAX_VALUE;
-        long minIdx = 0;
-        for(long i=l; i<=r; i++){
-            long dist = calcDistance(towns, i);
-            if(min > dist) {
+        BigInteger min = calcDistance(towns, l);
+        long minIdx = l;
+        for(long i=l+1; i<=r; i++){
+            BigInteger dist = calcDistance(towns, i);
+            if(min.compareTo(dist) > 0) {
                 min = dist;
                 minIdx = i;
             }
@@ -75,11 +76,11 @@ public class Main{
         br.close();
     }
 
-    static long calcDistance(List<Town> towns, long x) {
-        long dist = 0;
+    static BigInteger calcDistance(List<Town> towns, long x) {
+        BigInteger dist = BigInteger.valueOf(0);
         for(Town t : towns) {
-            dist += Math.abs(x - t.x) * (long)t.num;
-            System.out.printf("dist += %d * %d = %d\n", Math.abs(x-t.x), t.num, dist);
+            dist = dist.add(BigInteger.valueOf(Math.abs(x - t.x) * (long)t.num));
+            // System.out.println(dist.toString());
         }
 
         return dist;
