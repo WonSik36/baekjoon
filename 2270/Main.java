@@ -67,7 +67,7 @@ public class Main{
             if(ring.size() == N)
                 return new long[]{i+1, 0};
 
-            if(ring.contains(N)) {
+            if(ring.size() > 0 && ring.get(0) == N) {
                 to = i;
                 
                 for(Iterator<Integer> it = ring.iterator(); it.hasNext();) {
@@ -84,7 +84,7 @@ public class Main{
         for(int i=0;i<3;i++) {
             List<Integer> ring = rings.get(i);
 
-            if(ring.contains(nextN)) {
+            if(ring.size() > 0 && ring.get(0) == nextN) {
                 from = i;
                 Iterator<Integer> it = ring.iterator();
                 it.next();
@@ -124,7 +124,7 @@ public class Main{
         for(int i=0;i<3;i++) {
             List<Integer> ring = rings.get(i);
 
-            if(ring.contains(nextN)) {
+            if(ring.size() > 0 && ring.get(0) == nextN) {
                 from = i;
                 Iterator<Integer> it = ring.iterator();
                 it.next();
